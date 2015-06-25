@@ -171,7 +171,7 @@ namespace PruebaIngresaAttention {
 			atencion->estado = "Esperando";
 			atencion->customer->id = c->id;
 			StansaArduinoManager::AddAttention(atencion);
-			MessageBox::Show("Atencion Ingresada Correctamente"); //compila
+			MessageBox::Show("Atencion Ingresada Correctamente"); //compilas
 		}
 	}
 };
