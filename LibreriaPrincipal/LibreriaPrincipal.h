@@ -55,6 +55,7 @@ namespace LibreriaPrincipal {
 		int MaquinasOperativas;
 		List<Staff^>^ listStaff; //Cada ModuloStansa tiene un grupo de Staff trabajando en el.
 		List<Product^>^ listProduct; //Cada ModuloStansa tiene una lista de Productos que puede vender
+		List<ModuloStansa^> ^ ModStansaList;
 	};
 
 	public ref class Attention {

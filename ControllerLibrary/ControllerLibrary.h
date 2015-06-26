@@ -1,4 +1,4 @@
-// Libreria Controller.h
+// ControllerLibrary.h
 
 #pragma once
 
@@ -6,7 +6,7 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace LibreriaPrincipal;
 
-namespace LibreriaController {
+namespace ControllerLibrary {
 
 	public ref class CustomerDB //Base de Datos para Todos los Customers
 	{
@@ -32,17 +32,35 @@ namespace LibreriaController {
 		List<Attention^>^ QueryAllByModuloStansaAndCustomer(ModuloStansa^ modulo, Customer^ customer);
 	}; //Fin Clase AttentionDB
 
+
+
+	public ref class ModuloStansaDB
+	{
+	public:
+		List<ModuloStansa^> ^ listModuloStansa;
+	public:
+		List<ModuloStansa^>^ QueryAll();
+		ModuloStansa^ QuerryByName(String^ name);
+	}; //Fin Clase ModuloStansaDB
+
+
+
 	public ref class StansaArduinoManager
 	{
 	public:
 		static CustomerDB^ customerDB = gcnew CustomerDB();
 		static AttentionDB^ attentionDB = gcnew AttentionDB();
+		static ModuloStansaDB^ moduloStansaDB = gcnew ModuloStansaDB();
 	public:
 		//metodos de clase globlales para Customer
 		static Customer^ QueryCustomerById(int id);
 		static Customer^ QueryCustomerByDni(String^ dni);
 		static Customer^ QueryCustomerByCodigoPUCP(String^ codigoPUCP);
 		static List<Customer^>^ QueryAllCustomer();
+
+		//metodos para modulo Stansa
+		static List<ModuloStansa^>^ QuerryAllModuloStansa();
+		static ModuloStansa^ QuerryModuloStansaByName(String^ name);
 
 		//metodos de clase globlales para Attention
 		static void AddAttention(Attention^ a);
