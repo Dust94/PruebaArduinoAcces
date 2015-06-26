@@ -164,6 +164,7 @@ namespace PruebaIngresaAttention {
 		if (Validacion()){
 			DateTime^ fechaActual = DateTime::Now; //Creo un objeto DateTime con la hora actual
 			Attention^ atencion = gcnew Attention();
+			atencion->customer = gcnew Customer();
 
 			atencion->fecha = fechaActual;
 			atencion->hora_ini = fechaActual;
