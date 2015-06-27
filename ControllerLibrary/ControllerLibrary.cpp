@@ -1,8 +1,11 @@
-// This is the main DLL file.
-#include "stdafx.h"
-#include "Libreria Controller.h"
+// Archivo DLL principal.
 
-using namespace LibreriaController;
+#include "stdafx.h"
+#include "ControllerLibrary.h"
+
+
+
+using namespace ControllerLibrary;
 using namespace System::IO;
 using namespace System::Runtime::Serialization;
 using namespace System::Runtime::Serialization::Formatters::Binary;
@@ -201,18 +204,19 @@ List<Customer^>^ CustomerDB::QueryAll(){
 
 //Metodos de la Clase AttentionDB
 void AttentionDB::Add(Attention^ a){
+	
 	//Paso 1: Obtener la conexión
 	SqlConnection^ conn;
 	conn = gcnew SqlConnection();
 	conn->ConnectionString = "Server=inti.lab.inf.pucp.edu.pe;" +
-		"Database=inf237;User ID=inf237g4;Password=wXJ7FpUHDnYKjf89;";
+		"Database=inf237g4;User ID=inf237g4;Password=wXJ7FpUHDnYKjf89;";
 	conn->Open();
 	//Paso 2: Preparamos la sentencia
 	SqlCommand^ comm = gcnew SqlCommand();
 	comm->Connection = conn;
-	comm->CommandText = "INSERT INTO AttentionDB " +
-		" (fecha, n_orden, hora_ini, hora_fin, estado, customerId)" +
-		" VALUES (@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8)";
+	comm->CommandText = "INSERT INTO Attention_DB " +
+		" (date, orderNumber, inTime, outTime, status, idCustomer,idModStansa )" +
+		" VALUES (@p1,@p2,@p3,@p4,@p5,@p6,@p7)";
 	SqlParameter^ p1 = gcnew SqlParameter("@p1",
 		System::Data::SqlDbType::DateTime);
 	SqlParameter^ p2 = gcnew SqlParameter("@p2",
@@ -225,6 +229,10 @@ void AttentionDB::Add(Attention^ a){
 		System::Data::SqlDbType::VarChar);
 	SqlParameter^ p6 = gcnew SqlParameter("@p6",
 		System::Data::SqlDbType::Int);
+	SqlParameter^ p7 = gcnew SqlParameter("@p7",
+		System::Data::SqlDbType::Int);
+	//SqlParameter^ p8 = gcnew SqlParameter("@p8",
+//		System::Data::SqlDbType::Int);
 
 	p1->Value = a->fecha; //DateTime
 	p2->Value = a->n_orden; //int
@@ -232,6 +240,8 @@ void AttentionDB::Add(Attention^ a){
 	p4->Value = a->hora_fin; //DateTime
 	p5->Value = a->estado; // String
 	p6->Value = a->customer->id; //int
+	p7->Value = a->moduloStansa->id;
+	//p8->Value = a->staff->id;
 
 	comm->Parameters->Add(p1);
 	comm->Parameters->Add(p2);
@@ -239,6 +249,7 @@ void AttentionDB::Add(Attention^ a){
 	comm->Parameters->Add(p4);
 	comm->Parameters->Add(p5);
 	comm->Parameters->Add(p6);
+	comm->Parameters->Add(p7);
 
 	//Paso 3: Ejecución de la sentencia
 	comm->ExecuteNonQuery();
@@ -255,17 +266,18 @@ void AttentionDB::Update(Attention^ a){
 	//Paso 2: Preparamos la sentencia
 	SqlCommand^ comm = gcnew SqlCommand();
 	comm->Connection = conn;
-	comm->CommandText = "UPDATE AttentionDB " +
-		"SET fecha=@p1, n_orden=@p2, hora_ini=@p3, hora_fin=@p4, estado=@p5, customerId=@p6 , moduloStansaId=@p7 , staffId=@p8  " +
+	comm->CommandText = "UPDATE Attention_DB " +
+
+		"SET date=@p1, orderNumber=@p2, inTime=@p3, outTime=@p4, status=@p5, idCustomer=@p6 , idModStansa=@p7 , idStaff=@p8  " +
 		" WHERE id=@p9";
 	SqlParameter^ p1 = gcnew SqlParameter("@p1",
-		System::Data::SqlDbType::VarChar);
+		System::Data::SqlDbType::DateTime);
 	SqlParameter^ p2 = gcnew SqlParameter("@p2",
 		System::Data::SqlDbType::Int);
 	SqlParameter^ p3 = gcnew SqlParameter("@p3",
-		System::Data::SqlDbType::VarChar);
+		System::Data::SqlDbType::DateTime);
 	SqlParameter^ p4 = gcnew SqlParameter("@p4",
-		System::Data::SqlDbType::VarChar);
+		System::Data::SqlDbType::DateTime);
 	SqlParameter^ p5 = gcnew SqlParameter("@p5",
 		System::Data::SqlDbType::VarChar);
 	SqlParameter^ p6 = gcnew SqlParameter("@p6",
@@ -311,7 +323,7 @@ Attention^ AttentionDB::QueryById(int id){
 	//Paso 2: Preparamos la sentencia
 	SqlCommand^ comm = gcnew SqlCommand();
 	comm->Connection = conn;
-	comm->CommandText = "SELECT * FROM AttentionDB " +
+	comm->CommandText = "SELECT * FROM Attention_DB " +
 		"WHERE id=@p1";
 	SqlParameter^ p1 = gcnew SqlParameter("@p1",
 		System::Data::SqlDbType::Int);
@@ -325,22 +337,22 @@ Attention^ AttentionDB::QueryById(int id){
 	if (dr->Read()){
 		a = gcnew Attention();
 		a->id = (int)dr["id"];
-		if (dr["fecha"] != System::DBNull::Value)
-			a->fecha = safe_cast<DateTime^>(dr["fecha"]);
-		if (dr["n_orden"] != System::DBNull::Value)
-			a->n_orden = safe_cast<int>(dr["n_orden"]);
-		if (dr["hora_ini"] != System::DBNull::Value)
-			a->hora_ini = safe_cast<DateTime^>(dr["hora_ini"]);
-		if (dr["hora_fin"] != System::DBNull::Value)
-			a->hora_fin = safe_cast<DateTime^>(dr["hora_fin"]);
-		if (dr["estado"] != System::DBNull::Value)
-			a->estado = safe_cast<String^>(dr["estado"]);
-		if (dr["customerId"] != System::DBNull::Value)
-			a->customer->id = safe_cast<int>(dr["customerId"]);
-		if (dr["moduloStansaId"] != System::DBNull::Value)
-			a->moduloStansa->id = safe_cast<int>(dr["moduloStansaId"]);
-		if (dr["staffId"] != System::DBNull::Value)
-			a->staff->id = safe_cast<int>(dr["staffId"]);
+		if (dr["date"] != System::DBNull::Value)
+			a->fecha = safe_cast<DateTime^>(dr["date"]);
+		if (dr["orderNumber"] != System::DBNull::Value)
+			a->n_orden = safe_cast<int>(dr["orderNumber"]);
+		if (dr["inTime"] != System::DBNull::Value)
+			a->hora_ini = safe_cast<DateTime^>(dr["inTime"]);
+		if (dr["outTime"] != System::DBNull::Value)
+			a->hora_fin = safe_cast<DateTime^>(dr["outTime"]);
+		if (dr["status"] != System::DBNull::Value)
+			a->estado = safe_cast<String^>(dr["status"]);
+		if (dr["idCustomer"] != System::DBNull::Value)
+			a->customer->id = safe_cast<int>(dr["idCustomer"]);
+		if (dr["idModStansa"] != System::DBNull::Value)
+			a->moduloStansa->id = safe_cast<int>(dr["idModStansa"]);
+		if (dr["idStaff"] != System::DBNull::Value)
+			a->staff->id = safe_cast<int>(dr["idStaff"]);
 	}
 	//Paso 4: Cerramos el dataReader y la conexión con la BD
 	dr->Close();
@@ -357,7 +369,7 @@ List<Attention^>^ AttentionDB::QueryAll(){
 	//Paso 2: Preparamos la sentencia
 	SqlCommand^ comm = gcnew SqlCommand();
 	comm->Connection = conn;
-	comm->CommandText = "SELECT * FROM AttentionDB ";
+	comm->CommandText = "SELECT * FROM Attention_DB ";
 
 	//Paso 3: Ejecución de la sentencia
 	SqlDataReader^ dr = comm->ExecuteReader();
@@ -366,22 +378,22 @@ List<Attention^>^ AttentionDB::QueryAll(){
 	while (dr->Read()){
 		Attention^a = gcnew Attention();
 		a->id = (int)dr["id"];
-		if (dr["fecha"] != System::DBNull::Value)
-			a->fecha = safe_cast<DateTime^>(dr["fecha"]);
-		if (dr["n_orden"] != System::DBNull::Value)
-			a->n_orden = safe_cast<int>(dr["n_orden"]);
-		if (dr["hora_ini"] != System::DBNull::Value)
-			a->hora_ini = safe_cast<DateTime^>(dr["hora_ini"]);
+		if (dr["date"] != System::DBNull::Value)
+			a->fecha = safe_cast<DateTime^>(dr["date"]);
+		if (dr["orderNumber"] != System::DBNull::Value)
+			a->n_orden = safe_cast<int>(dr["orderNumber"]);
+		if (dr["inTime"] != System::DBNull::Value)
+			a->hora_ini = safe_cast<DateTime^>(dr["inTime"]);
 		if (dr["hora_fin"] != System::DBNull::Value)
 			a->hora_fin = safe_cast<DateTime^>(dr["hora_fin"]);
-		if (dr["estado"] != System::DBNull::Value)
-			a->estado = safe_cast<String^>(dr["estado"]);
-		if (dr["customerId"] != System::DBNull::Value)
-			a->customer->id = safe_cast<int>(dr["customerId"]);
-		if (dr["moduloStansaId"] != System::DBNull::Value)
-			a->moduloStansa->id = safe_cast<int>(dr["moduloStansaId"]);
-		if (dr["staffId"] != System::DBNull::Value)
-			a->staff->id = safe_cast<int>(dr["staffId"]);
+		if (dr["status"] != System::DBNull::Value)
+			a->estado = safe_cast<String^>(dr["status"]);
+		if (dr["idCustomer"] != System::DBNull::Value)
+			a->customer->id = safe_cast<int>(dr["idCustomer"]);
+		if (dr["idModStansa"] != System::DBNull::Value)
+			a->moduloStansa->id = safe_cast<int>(dr["idModStansa"]);
+		if (dr["idStaff"] != System::DBNull::Value)
+			a->staff->id = safe_cast<int>(dr["idStaff"]);
 
 		AttentionList->Add(a);
 	}
@@ -408,7 +420,87 @@ List<Customer^>^ StansaArduinoManager::QueryAllCustomer(){
 }
 
 
-//metodos de clase globlales para Attention
+//metodos modulo Stansa
+
+List<ModuloStansa^>^ ModuloStansaDB::QueryAll(){
+
+	//Paso 1: Se abre la conexión
+	SqlConnection^ conn;
+	conn = gcnew SqlConnection();
+	conn->ConnectionString = "Server=inti.lab.inf.pucp.edu.pe;" +
+		"Database=inf237g4;User ID=inf237g4;Password=wXJ7FpUHDnYKjf89;";
+	conn->Open();
+	//Paso 2: Preparamos la sentencia
+	SqlCommand^ comm = gcnew SqlCommand();
+	comm->Connection = conn;
+	comm->CommandText = "SELECT * FROM ModStansa_DB ";
+
+	//Paso 3: Ejecución de la sentencia
+	SqlDataReader^ dr = comm->ExecuteReader();
+	//Paso 3.1: Procesamos los resultados
+	List<ModuloStansa^>^ ModStansaList = gcnew List<ModuloStansa^>();
+	while (dr->Read()){
+		ModuloStansa^m = gcnew ModuloStansa();
+		m->id = (int)dr["id"];
+		m->name = safe_cast<String^>(dr["name"]);
+		if (dr["name"] != System::DBNull::Value)
+			m->name = safe_cast<String ^>(dr["name"]);
+		if (dr["place"] != System::DBNull::Value)
+			m->place = safe_cast<String ^>(dr["place"]);
+		if (dr["operativeMachines"] != System::DBNull::Value)
+			m->MaquinasOperativas = safe_cast<int>(dr["operativeMachines"]);
+
+		ModStansaList->Add(m);
+	}
+	//Paso 4: Cerramos el dataReader y la conexión con la BD
+	dr->Close();
+	conn->Close();
+	return ModStansaList;
+
+}
+ModuloStansa^ ModuloStansaDB::QuerryByName(String^ name){
+	//Paso 1: Se abre la conexión
+	SqlConnection^ conn;
+	conn = gcnew SqlConnection();
+	conn->ConnectionString = "Server=inti.lab.inf.pucp.edu.pe;" +
+		"Database=inf237g4;User ID=inf237g4;Password=wXJ7FpUHDnYKjf89;";
+	conn->Open();
+	//Paso 2: Preparamos la sentencia
+	SqlCommand^ comm = gcnew SqlCommand();
+	comm->Connection = conn;
+	comm->CommandText = "SELECT * FROM ModStansa_DB " +
+		"WHERE name=@p1";
+
+	SqlParameter^ p1 = gcnew SqlParameter("@p1",
+		System::Data::SqlDbType::VarChar);
+	p1->Value = name; // String
+	comm->Parameters->Add(p1);
+
+	//Paso 3: Ejecución de la sentencia
+	SqlDataReader^ dr = comm->ExecuteReader();
+	//Paso 3.1: Procesamos los resultados	
+	ModuloStansa ^ m = nullptr;
+	if (dr->Read()){
+		m = gcnew ModuloStansa();
+		m->id = (int)dr["id"];
+		if (dr["name"] != System::DBNull::Value)
+			m->name = safe_cast<String ^>(dr["name"]);
+		if (dr["place"] != System::DBNull::Value)
+			m->place = safe_cast<String ^>(dr["place"]);
+		if (dr["operativeMachines"] != System::DBNull::Value)
+			m->MaquinasOperativas = safe_cast<int>(dr["operativeMachines"]);
+	}
+	//Paso 4: Cerramos el dataReader y la conexión con la BD
+	dr->Close();
+	conn->Close();
+	return m;
+
+};
+
+
+
+
+//metodos de clase globlales para Stansa Arduino MAnager
 void StansaArduinoManager::AddAttention(Attention^ a){
 	attentionDB->Add(a);
 }
@@ -427,4 +519,9 @@ List<Attention^>^ StansaArduinoManager::QueryAllAttentionByModuloStansa(ModuloSt
 List<Attention^>^ StansaArduinoManager::QueryAllAttentionByModuloStansaAndCustomer(ModuloStansa^ modulo, Customer^ customer){
 	return attentionDB->QueryAllByModuloStansaAndCustomer(modulo, customer);
 }
-
+List<ModuloStansa^>^ StansaArduinoManager::QuerryAllModuloStansa(){
+	return moduloStansaDB->QueryAll();
+};
+ModuloStansa^ StansaArduinoManager::QuerryModuloStansaByName(String^ name){
+	return moduloStansaDB->QuerryByName(name);
+};

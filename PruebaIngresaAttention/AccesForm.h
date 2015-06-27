@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace PruebaIngresaAttention {
 
 	using namespace System;
@@ -9,7 +10,7 @@ namespace PruebaIngresaAttention {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace LibreriaPrincipal;
-	using namespace LibreriaController;
+	using namespace ControllerLibrary;
 	using namespace System::Collections::Generic;
 
 	/// <summary>
@@ -47,6 +48,7 @@ namespace PruebaIngresaAttention {
 
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::ComboBox^  cmbliststansa;
 
 	private:
 		/// <summary>
@@ -66,6 +68,7 @@ namespace PruebaIngresaAttention {
 			this->btnAddAttention = (gcnew System::Windows::Forms::Button());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->cmbliststansa = (gcnew System::Windows::Forms::ComboBox());
 			this->SuspendLayout();
 			// 
 			// txtDni
@@ -84,7 +87,7 @@ namespace PruebaIngresaAttention {
 			// 
 			// btnAddAttention
 			// 
-			this->btnAddAttention->Location = System::Drawing::Point(167, 116);
+			this->btnAddAttention->Location = System::Drawing::Point(77, 128);
 			this->btnAddAttention->Name = L"btnAddAttention";
 			this->btnAddAttention->Size = System::Drawing::Size(137, 23);
 			this->btnAddAttention->TabIndex = 8;
@@ -110,11 +113,20 @@ namespace PruebaIngresaAttention {
 			this->label1->TabIndex = 6;
 			this->label1->Text = L"Busqueda por codigo PUCP";
 			// 
+			// cmbliststansa
+			// 
+			this->cmbliststansa->FormattingEnabled = true;
+			this->cmbliststansa->Location = System::Drawing::Point(284, 128);
+			this->cmbliststansa->Name = L"cmbliststansa";
+			this->cmbliststansa->Size = System::Drawing::Size(178, 21);
+			this->cmbliststansa->TabIndex = 11;
+			// 
 			// AccesForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(516, 235);
+			this->Controls->Add(this->cmbliststansa);
 			this->Controls->Add(this->txtDni);
 			this->Controls->Add(this->txtCodigoPUCP);
 			this->Controls->Add(this->btnAddAttention);
@@ -122,6 +134,7 @@ namespace PruebaIngresaAttention {
 			this->Controls->Add(this->label1);
 			this->Name = L"AccesForm";
 			this->Text = L"AccesForm";
+			this->Load += gcnew System::EventHandler(this, &AccesForm::AccesForm_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -164,15 +177,29 @@ namespace PruebaIngresaAttention {
 		if (Validacion()){
 			DateTime^ fechaActual = DateTime::Now; //Creo un objeto DateTime con la hora actual
 			Attention^ atencion = gcnew Attention();
+			atencion->customer = gcnew Customer();
+			atencion->moduloStansa = gcnew ModuloStansa();
 
 			atencion->fecha = fechaActual;
 			atencion->hora_ini = fechaActual;
 			atencion->hora_fin = fechaActual;
 			atencion->estado = "Esperando";
 			atencion->customer->id = c->id;
+			atencion->moduloStansa = StansaArduinoManager::QuerryModuloStansaByName(cmbliststansa->Text);
 			StansaArduinoManager::AddAttention(atencion);
 			MessageBox::Show("Atencion Ingresada Correctamente"); //compilas
 		}
 	}
+private: System::Void AccesForm_Load(System::Object^  sender, System::EventArgs^  e) {
+
+			 List <ModuloStansa^> ^stansaList = StansaArduinoManager::QuerryAllModuloStansa();
+
+			 for (int i = 0; i < stansaList->Count; i++){
+				 cmbliststansa->Items->Add(
+					 stansaList[i]->name
+					 );
+			 }
+
+}
 };
 }

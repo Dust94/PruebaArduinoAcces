@@ -91,8 +91,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libreria Controller\Libreria Controller.vcxproj">
-      <Project>{f6369fcb-a13a-4062-8ba4-0fdc3dcd6458}</Project>
+    <ProjectReference Include="..\ControllerLibrary\ControllerLibrary.vcxproj">
+      <Project>{b1c063bd-f419-4fe1-a2e7-bf14b1f114d4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\LibreriaPrincipal\LibreriaPrincipal.vcxproj">
       <Project>{8fc10ecf-bd89-4d6a-a5af-08ab5d9a9f79}</Project>
