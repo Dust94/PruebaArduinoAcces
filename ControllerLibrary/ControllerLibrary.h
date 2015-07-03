@@ -30,6 +30,7 @@ namespace ControllerLibrary {
 		List<Attention^>^ QueryAll();
 		List<Attention^>^ QueryAllByModuloStansa(ModuloStansa^ modulo);
 		List<Attention^>^ QueryAllByModuloStansaAndCustomer(ModuloStansa^ modulo, Customer^ customer);
+		List<int>^ TakeTime();
 	}; //Fin Clase AttentionDB
 
 
@@ -69,6 +70,7 @@ namespace ControllerLibrary {
 		static List<Attention^>^ QueryAllAttention();
 		static List<Attention^>^ QueryAllAttentionByModuloStansa(ModuloStansa^ modulo);
 		static List<Attention^>^ QueryAllAttentionByModuloStansaAndCustomer(ModuloStansa^ modulo, Customer^ customer);
+		static List<int>^ AttentionTakeTime();
 	}; //Fin Clase StansaArduinoManager
 
 }

@@ -497,6 +497,50 @@ ModuloStansa^ ModuloStansaDB::QuerryByName(String^ name){
 
 };
 
+List<int>^ AttentionDB::TakeTime(){
+	//Paso 1: Se abre la conexión
+	SqlConnection^ conn;
+	conn = gcnew SqlConnection();
+	conn->ConnectionString = "Server=inti.lab.inf.pucp.edu.pe;" +
+		"Database=inf237;User ID=inf237g4;Password=wXJ7FpUHDnYKjf89;";
+	conn->Open();
+	//Paso 2: Preparamos la sentencia
+	SqlCommand^ comm = gcnew SqlCommand();
+	comm->Connection = conn;
+	comm->CommandText = "SELECT DATEPART(dd,date) AS OrderDay, " +
+		"DATEPART(hh, date) AS OrderHour, "+
+		"DATEPART(mi, date) AS Orderminute, "+
+		"DATEPART(ss, date) AS OrderSecond "+
+		"FROM Attention_DB "+
+		"WHERE id = 1 ";
+
+	//Paso 3: Ejecución de la sentencia
+	SqlDataReader^ dr = comm->ExecuteReader();
+	//Paso 3.1: Procesamos los resultados	
+	List<int>^ time = gcnew List<int>();
+	if (dr->Read()){
+		if (dr["OrderDay"] != System::DBNull::Value)
+			time->Add(safe_cast<int>(dr["OrderDay"]));
+		if (dr["OrderHour"] != System::DBNull::Value)
+			time->Add(safe_cast<int>(dr["OrderHour"]));
+		if (dr["Orderminute"] != System::DBNull::Value)
+			time->Add(safe_cast<int>(dr["Orderminute"]));
+		if (dr["OrderSecond"] != System::DBNull::Value)
+			time->Add(safe_cast<int>(dr["OrderSecond"]));
+	}
+	//Paso 4: Cerramos el dataReader y la conexión con la BD
+	dr->Close();
+	conn->Close();
+	return time;
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -525,3 +569,6 @@ List<ModuloStansa^>^ StansaArduinoManager::QuerryAllModuloStansa(){
 ModuloStansa^ StansaArduinoManager::QuerryModuloStansaByName(String^ name){
 	return moduloStansaDB->QuerryByName(name);
 };
+List<int>^ StansaArduinoManager::AttentionTakeTime(){
+	return attentionDB->TakeTime();
+}

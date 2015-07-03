@@ -141,6 +141,7 @@ namespace PruebaIngresaAttention {
 		}
 #pragma endregion
 		public: Customer^ c = gcnew Customer();
+				static int count = 1;
 	public: bool Validacion(){
 		bool codigo = String::Equals(txtCodigoPUCP->Text, ""); //Vacio = true. //Llenado = false
 		bool dni = String::Equals(txtDni->Text, "");
@@ -175,6 +176,8 @@ namespace PruebaIngresaAttention {
 	private: System::Void btnAddAttention_Click(System::Object^  sender, System::EventArgs^  e) {
 		
 		if (Validacion()){
+			List<int>^ time = gcnew List<int>();
+			//time = StansaArduinoManager::AttentionTakeTime();
 			DateTime^ fechaActual = DateTime::Now; //Creo un objeto DateTime con la hora actual
 			Attention^ atencion = gcnew Attention();
 			atencion->customer = gcnew Customer();
@@ -186,8 +189,10 @@ namespace PruebaIngresaAttention {
 			atencion->estado = "Esperando";
 			atencion->customer->id = c->id;
 			atencion->moduloStansa = StansaArduinoManager::QuerryModuloStansaByName(cmbliststansa->Text);
+			atencion->n_orden = count;
 			StansaArduinoManager::AddAttention(atencion);
 			MessageBox::Show("Atencion Ingresada Correctamente"); //compilas
+			count++;
 		}
 	}
 private: System::Void AccesForm_Load(System::Object^  sender, System::EventArgs^  e) {
